@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            color: #333;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 95%;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 43px;
+            background-color: #2980b9;
+            border-radius: 10px;
+        }
+
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        #searchInput {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 400px;
+        }
+
+        select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 200px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .clear-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #3498db;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background: #f1c40f;
+            color: white;
+        }
+
+        .status-approved {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .status-rejected {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .view-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .approve-btn {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .reject-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            border: 1px solid #e0e0e0;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0;
+            margin: -30px -30px 20px -30px;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            font-size: 28px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #f1c40f;
+        }
+
+        .modal-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-details p {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+            font-size: 0.95em;
+        }
+
+        .modal-details strong {
+            display: inline-block;
+            width: 180px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .modal-actions button {
+            padding: 10px 25px;
+            font-size: 1em;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .modal-actions button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .confirm-modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .confirm-modal-content p {
+            margin-bottom: 20px;
+        }
+
+        .confirm-btn, .cancel-btn {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .confirm-btn {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            color: white;
+            display: none;
+            z-index: 1000;
+        }
+
+        .notification-success {
+            background: #2ecc71;
+        }
+
+        .notification-error {
+            background: #e74c3c;
+        }
+
+        .no-requests {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin: 20px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HR Dashboard</h1>
+        <div class="filters">
+            <input type="text" id="searchInput" placeholder="Search by name or department">
+            <div>
+                <select id="statusFilter">
+                    <option value="All">All Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+                <button class="clear-btn" id="clearRecordsBtn">Clear All Records</button>
+            </div>
+        </div>
+
+        <table id="offboardingTable">
+            <thead>
+                <tr>
+                    <th>Employee Name</th>
+                    <th>Department</th>
+                    <th>Last Working Day</th>
+                    <th>Submission Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="requestsContainer"></tbody>
+        </table>
+
+        <div class="no-requests" id="noRequestsMessage">
+            No offboarding requests found at the moment.
+        </div>
+
+        <div class="modal" id="detailModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Offboarding Request Details</h2>
+                    <button class="close-btn" id="closeModal">×</button>
+                </div>
+                <div class="modal-details" id="modalDetails"></div>
+                <div class="modal-actions" id="modalActions"></div>
+            </div>
+        </div>
+
+        <div class="confirm-modal" id="confirmModal">
+            <div class="confirm-modal-content">
+                <p id="confirmMessage"></p>
+                <button class="confirm-btn" id="confirmBtn">Confirm</button>
+                <button class="cancel-btn" id="cancelBtn">Cancel</button>
+            </div>
+        </div>
+
+        <div class="notification" id="notification"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const statusFilter = document.getElementById('statusFilter');
+            const clearRecordsBtn = document.getElementById('clearRecordsBtn');
+            const requestsContainer = document.getElementById('requestsContainer');
+            const offboardingTable = document.getElementById('offboardingTable');
+            const noRequestsMessage = document.getElementById('noRequestsMessage');
+            const detailModal = document.getElementById('detailModal');
+            const closeModal = document.getElementById('closeModal');
+            const modalDetails = document.getElementById('modalDetails');
+            const modalActions = document.getElementById('modalActions');
+            const confirmModal = document.getElementById('confirmModal');
+            const confirmMessage = document.getElementById('confirmMessage');
+            const confirmBtn = document.getElementById('confirmBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const notification = document.getElementById('notification');
+
+            async function loadOffboardingRequests(searchTerm = '', statusValue = 'All') {
+                try {
+                    const response = await fetch(`http://localhost:3000/api/offboarding?search=${encodeURIComponent(searchTerm)}&status=${statusValue}`);
+                    const offboardingData = await response.json();
+
+                    requestsContainer.innerHTML = '';
+
+                    if (offboardingData.length === 0) {
+                        offboardingTable.style.display = 'none';
+                        noRequestsMessage.style.display = 'block';
+                        noRequestsMessage.textContent = searchTerm || statusValue !== 'All' 
+                            ? 'No offboarding requests found matching your search criteria.'
+                            : 'No offboarding requests found at the moment.';
+                        return;
+                    }
+
+                    offboardingTable.style.display = 'table';
+                    noRequestsMessage.style.display = 'none';
+
+                    offboardingData.forEach((request, index) => {
+                        const row = document.createElement('tr');
+                        const actionButtons = request.status === 'Pending' 
+                            ? `<button class="action-btn view-btn" onclick="viewRequestDetails(${request.id})">View</button>`
+                            : `<button class="action-btn view-btn" onclick="viewRequestDetails(${request.id})">View</button>`;
+                        
+                        row.innerHTML = `
+                            <td>${request.full_name}</td>
+                            <td>${request.department}</td>
+                            <td>${new Date(request.last_work_day).toLocaleDateString()}</td>
+                            <td>${new Date(request.submission_date).toLocaleDateString()}</td>
+                            <td><span class="status status-${request.status.toLowerCase()}">${request.status}</span></td>
+                            <td>${actionButtons}</td>
+                        `;
+
+                        requestsContainer.appendChild(row);
+                    });
+                } catch (error) {
+                    console.error('Error loading requests:', error);
+                    showNotification('Error loading requests', true);
+                }
+            }
+
+            function showNotification(message, isError = false) {
+                notification.textContent = message;
+                notification.className = `notification ${isError ? 'notification-error' : 'notification-success'}`;
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            }
+
+            function showConfirmModal(message, callback) {
+                confirmMessage.textContent = message;
+                confirmModal.style.display = 'flex';
+                confirmBtn.onclick = function() {
+                    callback();
+                    confirmModal.style.display = 'none';
+                };
+                cancelBtn.onclick = function() {
+                    confirmModal.style.display = 'none';
+                };
+            }
+
+            window.viewRequestDetails = async function(id) {
+                try {
+                    const response = await fetch(`http://localhost:3000/api/offboarding/${id}`);
+                    const request = await response.json();
+
+                    if (!request) {
+                        showNotification('Request not found', true);
+                        return;
+                    }
+
+                    function buildDetailedView() {
+                        return `
+                            <p><strong>Full Name:</strong> ${request.full_name}</p>
+                            <p><strong>Employee ID:</strong> ${request.employee_id}</p>
+                            <p><strong>Email:</strong> ${request.email}</p>
+                            <p><strong>Department:</strong> ${request.department}</p>
+                            <p><strong>Position:</strong> ${request.position}</p>
+                            <p><strong>Last Working Day:</strong> ${new Date(request.last_work_day).toLocaleDateString()}</p>
+                            <p><strong>Personal Email:</strong> ${request.personal_email}</p>
+                            <p><strong>Phone Number:</strong> ${request.phone_number}</p>
+                            <p><strong>Emergency Contact Name:</strong> ${request.alternate_contact_name || 'N/A'}</p>
+                            <p><strong>Emergency Contact Number:</strong> ${request.alternate_contact_number || 'N/A'}</p>
+                            <p><strong>Current Address:</strong> ${request.current_address}</p>
+                            <p><strong>Current Projects:</strong> ${request.current_projects}</p>
+                            <p><strong>Project Status:</strong> ${request.project_status}</p>
+                            <p><strong>Handover Person:</strong> ${request.handover_person}</p>
+                            <p><strong>Reason for Leaving:</strong> ${request.resignation_reason}</p>
+                            ${request.other_reason_details ? `<p><strong>Other Reason Details:</strong> ${request.other_reason_details}</p>` : ''}
+                            <p><strong>Feedback:</strong> ${request.feedback}</p>
+                            <p><strong>Would Recommend:</strong> ${request.would_recommend || 'N/A'}</p>
+                            <p><strong>Assets:</strong> ${request.assets.length > 0 ? request.assets.join(', ') : 'None'}</p>
+                            ${request.laptop_serial ? `<p><strong>Laptop Serial:</strong> ${request.laptop_serial}</p>` : ''}
+                            ${request.phone_serial ? `<p><strong>Phone Serial:</strong> ${request.phone_serial}</p>` : ''}
+                            ${request.monitor_serial ? `<p><strong>Monitor Serial:</strong> ${request.monitor_serial}</p>` : ''}
+                            ${request.access_card_number ? `<p><strong>Access Card Number:</strong> ${request.access_card_number}</p>` : ''}
+                            ${request.additional_assets ? `<p><strong>Additional Assets:</strong> ${request.additional_assets}</p>` : ''}
+                            <p><strong>Status:</strong> ${request.status}</p>
+                            <p><strong>Submission Date:</strong> ${new Date(request.submission_date).toLocaleDateString()}</p>
+                        `;
+                    }
+
+                    modalDetails.innerHTML = buildDetailedView();
+                    
+                    modalActions.innerHTML = '';
+                    if (request.status === 'Pending') {
+                        const approveBtn = document.createElement('button');
+                        approveBtn.className = 'action-btn approve-btn';
+                        approveBtn.textContent = 'Approve';
+                        approveBtn.onclick = function() {
+                            showConfirmModal(`Are you sure you want to approve this request?`, async function() {
+                                await updateRequestStatus(id, 'Approved');
+                                detailModal.style.display = 'none';
+                            });
+                        };
+                        
+                        const rejectBtn = document.createElement('button');
+                        rejectBtn.className = 'action-btn reject-btn';
+                        rejectBtn.textContent = 'Reject';
+                        rejectBtn.onclick = function() {
+                            showConfirmModal(`Are you sure you want to reject this request?`, async function() {
+                                await updateRequestStatus(id, 'Rejected');
+                                detailModal.style.display = 'none';
+                            });
+                        }
+                        
+                        modalActions.appendChild(approveBtn);
+                        modalActions.appendChild(rejectBtn);
+                    }
+                    
+                    detailModal.style.display = 'flex';
+                } catch (error) {
+                    console.error('Error viewing request:', error);
+                    showNotification('Error viewing request details', true);
+                }
+            };
+
+            async function updateRequestStatus(id, status) {
+                try {
+                    const response = await fetch(`http://localhost:3000/api/offboarding/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ status }),
+                    });
+
+                    const result = await response.json();
+                    if (!response.ok) {
+                        throw new Error(result.error || 'Update failed');
+                    }
+
+                    showNotification(`Request has been ${status.toLowerCase()} successfully.`);
+                    loadOffboardingRequests(searchInput.value, statusFilter.value);
+                } catch (error) {
+                    console.error('Error updating status:', error);
+                    showNotification('Error updating request status', true);
+                }
+            }
+
+            searchInput.addEventListener('input', function() {
+                loadOffboardingRequests(this.value, statusFilter.value);
+            });
+
+            statusFilter.addEventListener('change', function() {
+                loadOffboardingRequests(this.value, statusFilter.value);
+            });
+
+            clearRecordsBtn.addEventListener('click', function() {
+                showConfirmModal('Are you sure you want to clear all records? This action cannot be undone.', async function() {
+                    try {
+                        const response = await fetch('http://localhost:3000/api/offboarding', {
+                            method: 'DELETE',
+                        });
+                        const result = await response.json();
+                        if (!response.ok) {
+                            throw new Error(result.error || 'Clear failed');
+                        }
+                        showNotification('All records have been cleared successfully.');
+                        loadOffboardingRequests();
+                    } catch (error) {
+                        console.error('Error clearing records:', error);
+                        showNotification('Error clearing records', true);
+                    }
+                });
+            });
+
+            closeModal.addEventListener('click', function() {
+                detailModal.style.display = 'none';
+            });
+
+            window.addEventListener('click', function(event) {
+                if (event.target === detailModal) {
+                    detailModal.style.display = 'none';
+                }
+                if (event.target === confirmModal) {
+                    confirmModal.style.display = 'none';
+                }
+            });
+
+            loadOffboardingRequests();
+        });
+    </script>
+</body>
+</html>

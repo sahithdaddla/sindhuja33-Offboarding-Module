@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Offboarding Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 10px;
+        }
+
+        .container {
+            width: 95%;
+            margin: 0 auto;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 43px;
+            background-color: #2980b9;
+            border-radius: 10px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 35px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #eee;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress {
+            width: 0%;
+            height: 100%;
+            background: #3498db;
+            transition: width 0.3s ease;
+        }
+
+        .form-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            resize: none;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .prev-btn {
+            background: #27c81e;
+            color: white;
+        }
+
+        .next-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .submit-btn {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.8em;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        input.invalid, select.invalid, textarea.invalid {
+            border-color: red;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .asset-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .asset-item input[type="checkbox"] {
+            margin-right: 10px;
+            flex: 0 0 auto;
+        }
+
+        .asset-item label {
+            margin-bottom: 0;
+            flex: 0 0 150px;
+            display: inline-block;
+        }
+
+        .asset-item input[type="text"] {
+            margin-bottom: 0;
+            margin-left: 10px;
+            flex: 1;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .success-message {
+            text-align: center;
+            color: #2ecc71;
+            font-size: 1.2em;
+            padding: 20px;
+            display: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Employee Offboarding Management</h1>
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+
+        <form id="offboardingForm">
+            <!-- Personal Information Section -->
+            <div class="form-section active" data-section="1">
+                <h2>Personal Information</h2>
+                <div class="form-grid">
+                    <div>
+                        <label for="fullName">Full Name *</label>
+                        <input type="text" id="fullName" name="fullName" required minlength="5" maxlength="50" class="alpha-only">
+                        <div class="error-message" id="fullNameError">Full Name must be 5-50 characters and contain only alphabets</div>
+                    </div>
+                    <div>
+                        <label for="employeeId">Employee ID *</label>
+                        <input type="text" id="employeeId" name="employeeId" required maxlength="7" class="alphanumeric-only">
+                        <div class="error-message" id="employeeIdError">Employee ID must start with ATS0, followed by 3 digits (last 3 digits cannot be all zeros) and contain only alphanumeric characters</div>
+                    </div>
+                    <div>
+                        <label for="email">Company Email *</label>
+                        <input type="email" id="email" name="email" required pattern="[a-zA-Z0-9]{3,50}@astrolitetech\.com$">
+                        <div class="error-message" id="emailError">Only @astrolitetech.com emails are allowed (username must be 3-9 alphanumeric characters)</div>
+                    </div>
+                    <div>
+                        <label for="department">Department</label>
+                        <select id="department" name="department" required>
+                            <option value="">Select Department</option>
+                            <option value="frontend">Frontend Development</option>
+                            <option value="backend">Backend Development</option>
+                            <option value="fullstack">Full Stack Development</option>
+                            <option value="devops">DevOps</option>
+                            <option value="qa">Quality Assurance</option>
+                            <option value="hr">Human Resources</option>
+                            <option value="sales">Sales</option>
+                            <option value="marketing">Marketing</option>
+                        </select>
+                        <div class="error-message" id="departmentError">Please select a department</div>
+                    </div>
+                    <div>
+                        <label for="position">Position *</label>
+                        <input type="text" id="position" name="position" required minlength="3" maxlength="40" class="alpha-only">
+                        <div class="error-message" id="positionError">Position must be 3-40 characters and contain only alphabets</div>
+                    </div>
+                    <div>
+                        <label for="lastWorkDay">Last Working Day</label>
+                        <input type="date" id="lastWorkDay" name="lastWorkDay" required>
+                        <div class="error-message" id="lastWorkDayError">Please select a valid future date with a 4-digit year</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information Section -->
+            <div class="form-section" data-section="2">
+                <h2>Contact Information</h2>
+                <div class="form-grid">
+                    <div>
+                        <label for="personalEmail">Personal Email *</label>
+                        <input type="email" id="personalEmail" name="personalEmail" required pattern="[a-zA-Z0-9]{5,20}@(gmail\.com|yahoo\.com|outlook\.com)$">
+                        <div class="error-message" id="personalEmailError">Only @gmail.com, @yahoo.com, or @outlook.com emails are allowed (username must be 5-20 alphanumeric characters)</div>
+                    </div>
+                    <div>
+                        <label for="phoneNumber">Phone Number *</label>
+                        <input type="tel" id="phoneNumber" name="phoneNumber" required maxlength="10" class="numeric-only">
+                        <div class="error-message" id="phoneNumberError">Phone number must be exactly 10 digits</div>
+                    </div>
+                    <div>
+                        <label for="alternateContactName">Emergency Contact Name (optional)</label>
+                        <input type="text" id="alternateContactName" name="alternateContactName" minlength="3" maxlength="30" class="alpha-only">
+                        <div class="error-message" id="alternateContactNameError">Contact name can only contain alphabets (max 30 characters)</div>
+                    </div>
+                    <div>
+                        <label for="alternateContactNumber">Emergency Contact Number (optional)</label>
+                        <input type="tel" id="alternateContactNumber" name="alternateContactNumber" maxlength="10" class="numeric-only">
+                    </div>
+                    <div>
+                        <label for="currentAddress">Current Address *</label>
+                        <textarea id="currentAddress" name="currentAddress" required minlength="10" maxlength="200" class="address-only"></textarea>
+                        <div class="error-message" id="currentAddressError">Address must be 10-200 characters (alphanumeric and ,./-; only)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Handover Section -->
+            <div class="form-section" data-section="3">
+                <h2>Project Handover</h2>
+                <div>
+                    <label for="currentProjects">Current Projects *</label>
+                    <textarea id="currentProjects" name="currentProjects" required minlength="10" maxlength="100" class="project-only" placeholder="List all ongoing projects and their current status"></textarea>
+                    <div class="error-message" id="currentProjectsError">Current Projects must be 10-50 alphabetical characters (excluding spaces and special characters . , ; / -)</div>
+                </div>
+                <div>
+                    <label for="projectStatus">Project Status *</label>
+                    <textarea id="projectStatus" name="projectStatus" required minlength="10" maxlength="300" class="project-only" placeholder="Provide detailed status of each project, including any pending tasks"></textarea>
+                    <div class="error-message" id="projectStatusError">Project Status must be 10-250 alphabetical characters (excluding spaces and special characters . , ; / -)</div>
+                </div>
+                <div>
+                    <label for="handoverPerson">Handover Person *</label>
+                    <input type="text" id="handoverPerson" name="handoverPerson" required minlength="5" maxlength="30" class="alpha-only" placeholder="Name of the person who will take over your responsibilities">
+                    <div class="error-message" id="handoverPersonError">Handover Person must be 5-30 alphabetical characters (excluding spaces)</div>
+                </div>
+            </div>
+
+            <!-- Exit Interview Section -->
+            <div class="form-section" data-section="4">
+                <h2>Exit Interview</h2>
+                <div>
+                    <label for="resignationReason">Reason for Leaving *</label>
+                    <select id="resignationReason" name="resignationReason" required>
+                        <option value="">Select Reason</option>
+                        <option value="career">Career Growth</option>
+                        <option value="compensation">Compensation</option>
+                        <option value="work-environment">Work Environment</option>
+                        <option value="personal">Personal Reasons</option>
+                        <option value="relocation">Relocation</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <div class="error-message" id="resignationReasonError">Please select a reason for leaving</div>
+                </div>
+                <div id="otherReasonContainer" class="hidden">
+                    <label for="otherReasonDetails">If Other, Please Specify</label>
+                    <textarea id="otherReasonDetails" name="otherReasonDetails" minlength="5" maxlength="100" class="alpha-only" placeholder="Provide details if 'Other' was selected"></textarea>
+                    <div class="error-message" id="otherReasonDetailsError">Details must be 5-50 alphabetical characters (excluding spaces)</div>
+                </div>
+                <div>
+                    <label for="feedback">Constructive Feedback *</label>
+                    <textarea id="feedback" name="feedback" required minlength="5" maxlength="300" class="alpha-only" placeholder="Please provide honest feedback about your experience"></textarea>
+                    <div class="error-message" id="feedbackError">Feedback must be 5-250 alphabetical characters (excluding spaces)</div>
+                </div>
+                <div>
+                    <label for="wouldRecommend">Would You Recommend the Company?</label>
+                    <select id="wouldRecommend" name="wouldRecommend">
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                        <option value="maybe">Maybe</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Asset Return Section -->
+            <div class="form-section" data-section="5">
+                <h2>Asset Return</h2>
+                <div id="assetList">
+                    <div class="asset-item">
+                        <input type="checkbox" name="assets" value="laptop" id="laptopCheckbox">
+                        <label for="laptopCheckbox">Company Laptop</label>
+                        <input type="text" name="laptopSerial" id="laptopSerial" placeholder="Serial Number" minlength="5" maxlength="15" class="alphanumeric-only">
+                        <div class="error-message" id="laptopSerialError">Serial number must be 5-15 alphanumeric characters</div>
+                    </div>
+                    <div class="asset-item">
+                        <input type="checkbox" name="assets" value="phone" id="phoneCheckbox">
+                        <label for="phoneCheckbox">Company Phone</label>
+                        <input type="text" name="phoneSerial" id="phoneSerial" placeholder="Serial Number" minlength="5" maxlength="15" class="alphanumeric-only">
+                        <div class="error-message" id="phoneSerialError">Serial number must be 5-15 alphanumeric characters</div>
+                    </div>
+                    <div class="asset-item">
+                        <input type="checkbox" name="assets" value="monitor" id="monitorCheckbox">
+                        <label for="monitorCheckbox">External Monitor</label>
+                        <input type="text" name="monitorSerial" id="monitorSerial" placeholder="Serial Number" minlength="5" maxlength="15" class="alphanumeric-only">
+                        <div class="error-message" id="monitorSerialError">Serial number must be 5-15 alphanumeric characters</div>
+                    </div>
+                    <div class="asset-item">
+                        <input type="checkbox" name="assets" value="accessCard" id="accessCardCheckbox">
+                        <label for="accessCardCheckbox">Access Card</label>
+                        <input type="text" name="accessCardNumber" id="accessCardNumber" placeholder="Card Number" minlength="5" maxlength="15" class="alphanumeric-only">
+                        <div class="error-message" id="accessCardNumberError">Card number must be 5-15 alphanumeric characters</div>
+                    </div>
+                    <div>
+                        <label for="additionalAssets">Additional Assets</label>
+                        <textarea id="additionalAssets" name="additionalAssets" minlength="5" maxlength="30" class="alpha-only" placeholder="List any other company assets not mentioned above"></textarea>
+                        <div class="error-message" id="additionalAssetsError">Additional Assets must be 5-30 alphabetical characters</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button type="button" id="prevBtn" class="prev-btn" style="display:none;">Previous</button>
+                <button type="button" id="nextBtn" class="next-btn">Next</button>
+                <button type="submit" id="submitBtn" class="submit-btn" style="display:none;">Submit</button>
+            </div>
+        </form>
+
+        <div class="success-message">
+            Your offboarding request has been submitted successfully.
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('offboardingForm');
+            const sections = document.querySelectorAll('.form-section');
+            const nextBtn = document.getElementById('nextBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const progressBar = document.querySelector('.progress');
+            const successMessage = document.querySelector('.success-message');
+            const resignationReasonSelect = document.getElementById('resignationReason');
+            const otherReasonContainer = document.getElementById('otherReasonContainer');
+            let currentSection = 0;
+
+            // Function to normalize spaces in text inputs
+            function normalizeSpaces(input) {
+                let value = input.value.replace(/^\s+/, '').replace(/\s+/g, ' ');
+                if (value !== input.value) {
+                    input.value = value;
+                }
+                return value;
+            }
+
+            // Apply space normalization to all text inputs and textareas
+            const textInputs = document.querySelectorAll('input[type="text"]:not([id="employeeId"]), textarea');
+            textInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    normalizeSpaces(this);
+                });
+                input.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                    const normalizedText = pastedText.replace(/^\s+/, '').replace(/\s+/g, ' ');
+                    const startPos = this.selectionStart;
+                    const endPos = this.selectionEnd;
+                    this.value = this.value.substring(0, startPos) + normalizedText + this.value.substring(endPos);
+                    validateField(this);
+                });
+            });
+
+            // Toggle visibility of otherReasonDetails based on resignationReason
+            resignationReasonSelect.addEventListener('change', function() {
+                if (this.value === 'other') {
+                    otherReasonContainer.classList.remove('hidden');
+                    document.getElementById('otherReasonDetails').setAttribute('required', '');
+                } else {
+                    otherReasonContainer.classList.add('hidden');
+                    document.getElementById('otherReasonDetails').removeAttribute('required');
+                    document.getElementById('otherReasonDetails').value = '';
+                    document.getElementById('otherReasonDetails').classList.remove('invalid');
+                    document.getElementById('otherReasonDetailsError').style.display = 'none';
+                }
+            });
+
+            // Add event listeners for input validation
+            const alphaOnlyInputs = document.querySelectorAll('.alpha-only');
+            alphaOnlyInputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (!/^[a-zA-Z\s]$/.test(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+                
+                input.addEventListener('paste', function(e) {
+                    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                    if (!/^[a-zA-Z\s]*$/.test(pastedText)) {
+                        e.preventDefault();
+                    }
+                });
+
+                input.addEventListener('input', function() {
+                    const maxAlphaLength = this.id === 'handoverPerson' ? 30 : 
+                                          this.id === 'otherReasonDetails' ? 50 : 
+                                          this.id === 'feedback' ? 250 : 
+                                          this.id === 'fullName' ? 50 : 
+                                          this.id === 'additionalAssets' ? 30 : 40;
+                    const alphaCount = (this.value.match(/[a-zA-Z]/g) || []).length;
+                    
+                    if (alphaCount > maxAlphaLength) {
+                        let newValue = '';
+                        let alphaCounter = 0;
+                        for (let char of this.value) {
+                            if (/[a-zA-Z]/.test(char)) {
+                                if (alphaCounter < maxAlphaLength) {
+                                    newValue += char;
+                                    alphaCounter++;
+                                }
+                            } else {
+                                newValue += char;
+                            }
+                        }
+                        this.value = newValue;
+                    }
+                });
+            });
+
+            const numericOnlyInputs = document.querySelectorAll('.numeric-only');
+            numericOnlyInputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (!/^\d$/.test(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+                
+                input.addEventListener('paste', function(e) {
+                    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                    if (!/^\d*$/.test(pastedText)) {
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            const addressOnlyInputs = document.querySelectorAll('.address-only');
+            addressOnlyInputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (!/^[a-zA-Z0-9\s,.\/;-]$/.test(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+                
+                input.addEventListener('paste', function(e) {
+                    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                    if (!/^[a-zA-Z0-9\s,.\/;-]*$/.test(pastedText)) {
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            const projectOnlyInputs = document.querySelectorAll('.project-only');
+            projectOnlyInputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    const currentValue = this.value;
+                    const alphaCount = (currentValue.match(/[a-zA-Z]/g) || []).length;
+                    const allowedSpecialChars = ['.', ',', ';', '/', '-'];
+                    
+                    if (/^[a-zA-Z]$/.test(e.key)) {
+                        return;
+                    }
+                    
+                    if (allowedSpecialChars.includes(e.key) && alphaCount >= 5) {
+                        return;
+                    }
+                    
+                    if (e.key === ' ') {
+                        return;
+                    }
+                    
+                    e.preventDefault();
+                });
+                
+                input.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                    const currentValue = this.value;
+                    const alphaCount = (currentValue.match(/[a-zA-Z]/g) || []).length;
+                    
+                    let filteredText = '';
+                    for (let char of pastedText) {
+                        if (/^[a-zA-Z\s]$/.test(char)) {
+                            filteredText += char;
+                        } else if (['.', ',', ';', '/', '-'].includes(char) && alphaCount >= 5) {
+                            filteredText += char;
+                        }
+                    }
+                    
+                    const startPos = this.selectionStart;
+                    const endPos = this.selectionEnd;
+                    this.value = currentValue.substring(0, startPos) + filteredText + currentValue.substring(endPos);
+                    
+                    validateField(this);
+                });
+                
+                input.addEventListener('input', function() {
+                    const maxAlphaLength = this.id === 'currentProjects' ? 50 : 250;
+                    const alphaCount = (this.value.match(/[a-zA-Z]/g) || []).length;
+                    
+                    if (alphaCount > maxAlphaLength) {
+                        let newValue = '';
+                        let alphaCounter = 0;
+                        for (let char of this.value) {
+                            if (/[a-zA-Z]/.test(char)) {
+                                if (alphaCounter < maxAlphaLength) {
+                                    newValue += char;
+                                    alphaCounter++;
+                                }
+                            } else {
+                                newValue += char;
+                            }
+                        }
+                        this.value = newValue;
+                    }
+                });
+            });
+
+            const alphanumericOnlyInputs = document.querySelectorAll('.alphanumeric-only');
+            alphanumericOnlyInputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (!/^[a-zA-Z0-9]$/.test(e.key)) {
+                        e.preventDefault();
+                    }
+                });
+                
+                input.addEventListener('paste', function(e) {
+                    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                    if (!/^[a-zA-Z0-9]*$/.test(pastedText)) {
+                        e.preventDefault();
+                    }
+                });
+
+                input.addEventListener('input', function() {
+                    const alphanumericCount = (this.value.match(/[a-zA-Z0-9]/g) || []).length;
+                    if (alphanumericCount > 15) {
+                        this.value = this.value.substring(0, 15);
+                    }
+                    validateField(this);
+                });
+            });
+
+            const employeeIdInput = document.getElementById('employeeId');
+            employeeIdInput.addEventListener('input', function() {
+                const value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+                if (!value.startsWith('ATS0')) {
+                    this.value = 'ATS0';
+                } else {
+                    this.value = value.substring(0, 7);
+                }
+            });
+
+            employeeIdInput.addEventListener('keypress', function(e) {
+                if (!/^[a-zA-Z0-9]$/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+
+            employeeIdInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                const filteredText = pastedText.replace(/[^a-zA-Z0-9]/g, '').substring(0, 7);
+                if (filteredText.startsWith('ATS0')) {
+                    this.value = filteredText;
+                } else {
+                    this.value = 'ATS0';
+                }
+                validateField(this);
+            });
+
+            employeeIdInput.addEventListener('blur', function() {
+                const errorElement = document.getElementById('employeeIdError');
+                const pattern = /^ATS0(?!000)\d{3}$/;
+                
+                if (!pattern.test(this.value)) {
+                    this.classList.add('invalid');
+                    errorElement.style.display = 'block';
+                } else {
+                    this.classList.remove('invalid');
+                    errorElement.style.display = 'none';
+                }
+            });
+
+            const emailInput = document.getElementById('email');
+            emailInput.addEventListener('input', function() {
+                const emailParts = this.value.split('@');
+                if (emailParts.length > 0) {
+                    const username = emailParts[0].replace(/[^a-zA-Z0-9]/g, '');
+                    if (emailParts.length > 1) {
+                        this.value = username + '@astrolitetech.com';
+                    } else {
+                        this.value = username;
+                    }
+                    if (username.length > 50) {
+                        this.value = username.substring(0, 50) + (emailParts.length > 1 ? '@astrolitetech.com' : '');
+                    }
+                }
+            });
+
+            emailInput.addEventListener('keypress', function(e) {
+                const currentValue = this.value;
+                const atIndex = currentValue.indexOf('@');
+                
+                if (atIndex !== -1 && this.selectionStart > atIndex) {
+                    e.preventDefault();
+                    return;
+                }
+                
+                if (e.key === '@' && atIndex === -1) {
+                    e.preventDefault();
+                    this.value = currentValue + '@astrolitetech.com';
+                    return;
+                }
+                
+                if (atIndex === -1 || this.selectionStart <= atIndex) {
+                    if (!/^[a-zA-Z0-9]$/.test(e.key)) {
+                        e.preventDefault();
+                    }
+                }
+            });
+
+            emailInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                let username = pastedText.split('@')[0];
+                username = username.replace(/[^a-zA-Z0-9]/g, '');
+                username = username.substring(0, 50);
+                this.value = username + '@astrolitetech.com';
+            });
+
+            const personalEmailInput = document.getElementById('personalEmail');
+            personalEmailInput.addEventListener('input', function() {
+                const emailParts = this.value.split('@');
+                if (emailParts.length > 0) {
+                    const username = emailParts[0].replace(/[^a-zA-Z0-9.]/g, '');
+                    if (emailParts.length > 1) {
+                        const domainPart = emailParts[1].toLowerCase();
+                        let validDomain = '';
+                        if (domainPart.startsWith('gmail.com')) validDomain = 'gmail.com';
+                        else if (domainPart.startsWith('yahoo.com')) validDomain = 'yahoo.com';
+                        else if (domainPart.startsWith('outlook.com')) validDomain = 'outlook.com';
+                        this.value = username + (validDomain ? '@' + validDomain : '@' + domainPart);
+                    } else {
+                        this.value = username;
+                    }
+                    if (username.length > 20) {
+                        this.value = username.substring(0, 20) + (emailParts.length > 1 ? '@' + this.value.split('@')[1] : '');
+                    }
+                }
+            });
+
+            personalEmailInput.addEventListener('keypress', function(e) {
+                const currentValue = this.value;
+                const atIndex = currentValue.indexOf('@');
+                
+                if (atIndex !== -1 && this.selectionStart > atIndex) {
+                    const domain = currentValue.substring(atIndex + 1);
+                    const isCompletingGmail = 'gmail.com'.startsWith(domain + e.key);
+                    const isCompletingYahoo = 'yahoo.com'.startsWith(domain + e.key);
+                    const isCompletingOutlook = 'outlook.com'.startsWith(domain + e.key);
+                    
+                    if (!isCompletingGmail && !isCompletingYahoo && !isCompletingOutlook) {
+                        e.preventDefault();
+                    }
+                    return;
+                }
+                
+                if (atIndex === -1 || this.selectionStart <= atIndex) {
+                    if (!/^[a-zA-Z0-9.@]$/.test(e.key)) {
+                        e.preventDefault();
+                    }
+                }
+            });
+
+            personalEmailInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                let username = pastedText.split('@')[0];
+                username = username.replace(/[^a-zA-Z0-9.]/g, '');
+                username = username.substring(0, 20);
+                
+                if (pastedText.includes('@')) {
+                    const domainPart = pastedText.split('@')[1].toLowerCase();
+                    if (domainPart.includes('gmail.com')) {
+                        this.value = username + '@gmail.com';
+                    } else if (domainPart.includes('yahoo.com')) {
+                        this.value = username + '@yahoo.com';
+                    } else if (domainPart.includes('outlook.com')) {
+                        this.value = username + '@outlook.com';
+                    } else {
+                        this.value = username + '@';
+                    }
+                } else {
+                    this.value = username;
+                }
+            });
+
+            personalEmailInput.addEventListener('blur', function() {
+                const errorElement = document.getElementById('personalEmailError');
+                const personalEmailPattern = /^[a-zA-Z0-9.]{5,20}@(gmail\.com|yahoo\.com|outlook\.com)$/;
+                
+                if (!personalEmailPattern.test(this.value)) {
+                    this.classList.add('invalid');
+                    errorElement.style.display = 'block';
+                } else {
+                    this.classList.remove('invalid');
+                    errorElement.style.display = 'none';
+                }
+            });
+
+            const phoneNumberInput = document.getElementById('phoneNumber');
+            phoneNumberInput.addEventListener('input', function() {
+                const value = this.value.replace(/\D/g, '');
+                if (value.length > 0 && !/^[6-9]/.test(value)) {
+                    this.value = '';
+                    return;
+                }
+                if (value.length > 10) {
+                    this.value = value.substring(0, 10);
+                } else {
+                    this.value = value;
+                }
+            });
+
+            phoneNumberInput.addEventListener('keypress', function(e) {
+                if (!/^\d$/.test(e.key)) {
+                    e.preventDefault();
+                    return;
+                }
+                if (this.value.length === 0 && !/^[6-9]$/.test(e.key)) {
+                    e.preventDefault();
+                    return;
+                }
+            });
+
+            phoneNumberInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                const digits = pastedText.replace(/\D/g, '');
+                if (digits.length > 0 && /^[6-9]/.test(digits)) {
+                    this.value = digits.substring(0, 10);
+                }
+            });
+
+            const emergencyContactInput = document.getElementById('alternateContactNumber');
+            emergencyContactInput.addEventListener('input', function() {
+                const value = this.value.replace(/\D/g, '');
+                if (value.length > 0 && !/^[6-9]/.test(value)) {
+                    this.value = '';
+                    return;
+                }
+                if (value.length > 10) {
+                    this.value = value.substring(0, 10);
+                } else {
+                    this.value = value;
+                }
+            });
+
+            emergencyContactInput.addEventListener('keypress', function(e) {
+                if (!/^\d$/.test(e.key)) {
+                    e.preventDefault();
+                    return;
+                }
+                if (this.value.length === 0 && !/^[6-9]$/.test(e.key)) {
+                    e.preventDefault();
+                    return;
+                }
+            });
+
+            emergencyContactInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                const digits = pastedText.replace(/\D/g, '');
+                if (digits.length > 0 && /^[6-9]/.test(digits)) {
+                    this.value = digits.substring(0, 10);
+                }
+            });
+
+            document.querySelectorAll('input, select, textarea').forEach(input => {
+                input.addEventListener('input', function() {
+                    validateField(this);
+                });
+                input.addEventListener('blur', function() {
+                    validateField(this);
+                });
+            });
+
+            function getTextWithoutSpaces(text) {
+                return text.replace(/\s/g, '');
+            }
+
+            function countAlphabeticalChars(text) {
+                return (text.match(/[a-zA-Z]/g) || []).length;
+            }
+
+            function countAlphanumericChars(text) {
+                return (text.match(/[a-zA-Z0-9]/g) || []).length;
+            }
+
+            function validateField(input) {
+                const errorElement = document.getElementById(`${input.id}Error`);
+                if (!errorElement) return true;
+
+                let isValid = true;
+                const value = normalizeSpaces(input);
+
+                if (input.hasAttribute('required') && !value.trim()) {
+                    isValid = false;
+                }
+
+                if (input.hasAttribute('minlength')) {
+                    const minLength = parseInt(input.getAttribute('minlength'));
+                    const count = input.classList.contains('alphanumeric-only') ? 
+                        countAlphanumericChars(value) : countAlphabeticalChars(value);
+                    if (count < minLength) {
+                        isValid = false;
+                    }
+                }
+
+                if (input.hasAttribute('maxlength') && input.classList.contains('alpha-only')) {
+                    const maxLength = input.id === 'handoverPerson' ? 30 : 
+                                     input.id === 'otherReasonDetails' ? 50 : 
+                                     input.id === 'feedback' ? 250 : 
+                                     input.id === 'fullName' ? 50 : 
+                                     input.id === 'additionalAssets' ? 30 : 40;
+                    const alphaCount = countAlphabeticalChars(value);
+                    if (alphaCount > maxLength) {
+                        isValid = false;
+                    }
+                }
+
+                if (input.hasAttribute('maxlength') && input.classList.contains('alphanumeric-only')) {
+                    const alphanumericCount = countAlphanumericChars(value);
+                    if (alphanumericCount > 15 || (value && alphanumericCount < 5 && input.hasAttribute('minlength'))) {
+                        isValid = false;
+                        if (errorElement) {
+                            errorElement.textContent = `${input.id === 'employeeId' ? 'Employee ID' : 'Serial number'} must be 5-15 alphanumeric characters`;
+                        }
+                    }
+                }
+
+                if (input.hasAttribute('pattern')) {
+                    const pattern = new RegExp(input.getAttribute('pattern'));
+                    if (!pattern.test(value)) {
+                        isValid = false;
+                    }
+                }
+
+                if (input.classList.contains('alpha-only')) {
+                    const alphabetPattern = /^[a-zA-Z\s]*$/;
+                    if (value && !alphabetPattern.test(value)) {
+                        isValid = false;
+                        if (errorElement) {
+                            errorElement.textContent = `${input.id === 'fullName' ? 'Full Name' : 
+                                                        input.id === 'position' ? 'Position' : 
+                                                        input.id === 'handoverPerson' ? 'Handover Person' : 
+                                                        input.id === 'otherReasonDetails' ? 'Details' : 
+                                                        input.id === 'additionalAssets' ? 'Additional Assets' : 
+                                                        'Contact Name'} must contain only alphabets`;
+                        }
+                    }
+                }
+
+                if (input.classList.contains('alphanumeric-only')) {
+                    const alphanumericPattern = /^[a-zA-Z0-9]*$/;
+                    if (value && !alphanumericPattern.test(value)) {
+                        isValid = false;
+                        if (errorElement) {
+                            errorElement.textContent = `${input.id === 'employeeId' ? 'Employee ID' : input.id === 'laptopSerial' ? 'Laptop serial number' : input.id === 'phoneSerial' ? 'Phone serial number' : input.id === 'monitorSerial' ? 'Monitor serial number' : 'Access card number'} must contain only alphanumeric characters`;
+                        }
+                    }
+                }
+
+                if (input.classList.contains('project-only')) {
+                    const projectPattern = /^[a-zA-Z\s.,;/-]*$/;
+                    const alphaCount = countAlphabeticalChars(value);
+                    const maxAlphaLength = input.id === 'currentProjects' ? 50 : 250;
+                    
+                    if (!projectPattern.test(value)) {
+                        isValid = false;
+                        errorElement.textContent = `${input.id === 'currentProjects' ? 'Current Projects' : 'Project Status'} can only contain alphabets, spaces, and special characters (. , ; / -)`;
+                    } else if (alphaCount > maxAlphaLength) {
+                        isValid = false;
+                        errorElement.textContent = `${input.id === 'currentProjects' ? 'Current Projects' : 'Project Status'} cannot exceed ${maxAlphaLength} alphabetical characters`;
+                    } else if (value.match(/[.,;/-]/) && alphaCount < 5) {
+                        isValid = false;
+                        errorElement.textContent = `Must have at least 5 alphabetical characters before using special characters (. , ; / -)`;
+                    }
+                }
+
+                if (input.id === 'phoneNumber' || input.id === 'alternateContactNumber') {
+                    const digitsOnly = value.replace(/\D/g, '');
+                    if (input.id === 'phoneNumber') {
+                        if (digitsOnly.length !== 10 || !/^[6-9]/.test(digitsOnly)) {
+                            isValid = false;
+                            document.getElementById('phoneNumberError').textContent = 'Phone number must be exactly 10 digits starting with 6, 7, 8, or 9';
+                        }
+                    } else if (input.id === 'alternateContactNumber' && digitsOnly.length > 0) {
+                        if (digitsOnly.length !== 10 || !/^[6-9]/.test(digitsOnly)) {
+                            isValid = false;
+                        }
+                    }
+                }
+
+                if (input.id === 'personalEmail') {
+                    const personalEmailPattern = /^[a-zA-Z0-9.]{5,20}@(gmail\.com|yahoo\.com|outlook\.com)$/;
+                    if (!personalEmailPattern.test(value)) {
+                        isValid = false;
+                    }
+                }
+
+                if (input.id === 'currentAddress') {
+                    const addressPattern = /^[a-zA-Z0-9\s,.\/;-]*$/;
+                    if (value && !addressPattern.test(value)) {
+                        isValid = false;
+                        errorElement.textContent = 'Address can only contain alphanumeric characters, spaces, and ,./;-';
+                    }
+                    const textWithoutSpaces = getTextWithoutSpaces(value);
+                    if (textWithoutSpaces.length > 200) {
+                        isValid = false;
+                        errorElement.textContent = 'Address cannot exceed 200 characters (excluding spaces)';
+                    }
+                }
+
+                if (input.id === 'employeeId') {
+                    const employeeIdPattern = /^ATS0(?!000)\d{3}$/;
+                    if (!employeeIdPattern.test(value)) {
+                        isValid = false;
+                    }
+                }
+
+                if (input.id === 'email') {
+                    const emailPattern = /^[a-zA-Z0-9]{3,50}@astrolitetech\.com$/;
+                    if (!emailPattern.test(value)) {
+                        isValid = false;
+                    }
+                }
+
+                if (input.id === 'lastWorkDay') {
+                    const selectedDate = new Date(value);
+                    const today = new Date();
+                    const twoMonthsFromToday = new Date();
+                    twoMonthsFromToday.setMonth(today.getMonth() + 2);
+                    today.setHours(0, 0, 0, 0);
+                    
+                    const yearPattern = /^\d{4}-\d{2}-\d{2}$/;
+                    if (!yearPattern.test(value)) {
+                        isValid = false;
+                        document.getElementById('lastWorkDayError').textContent = 'Last working day must have a 4-digit year';
+                    } else if (selectedDate <= today) {
+                        isValid = false;
+                        document.getElementById('lastWorkDayError').textContent = 'Last working day must be a future date';
+                    } else if (selectedDate > twoMonthsFromToday) {
+                        isValid = false;
+                        document.getElementById('lastWorkDayError').textContent = 'Last working day cannot be more than 2 months from today';
+                    }
+                }
+
+                if (isValid) {
+                    input.classList.remove('invalid');
+                    errorElement.style.display = 'none';
+                } else {
+                    input.classList.add('invalid');
+                    errorElement.style.display = 'block';
+                }
+
+                return isValid;
+            }
+
+            function validateSection(sectionIndex) {
+                const section = sections[sectionIndex];
+                const requiredInputs = section.querySelectorAll('[required]');
+                let isValid = true;
+
+                requiredInputs.forEach(input => {
+                    if (!validateField(input)) {
+                        isValid = false;
+                    }
+                });
+
+                if (sectionIndex === 4) {
+                    const checkedAssets = section.querySelectorAll('input[name="assets"]:checked');
+                    const additionalAssets = section.querySelector('#additionalAssets').value.trim();
+                    
+                    if (checkedAssets.length === 0 && !additionalAssets) {
+                        alert('Please list your returned assets or indicate none');
+                        isValid = false;
+                    }
+                }
+
+                return isValid;
+            }
+
+            function updateProgress() {
+                const progress = ((currentSection + 1) / sections.length) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+
+            function resetForm() {
+                form.reset();
+                sections.forEach(section => section.classList.remove('active'));
+                currentSection = 0;
+                sections[currentSection].classList.add('active');
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+                updateProgress();
+                document.querySelectorAll('.error-message').forEach(error => error.style.display = 'none');
+                document.querySelectorAll('input, select, textarea').forEach(input => input.classList.remove('invalid'));
+                otherReasonContainer.classList.add('hidden');
+                document.getElementById('otherReasonDetails').removeAttribute('required');
+            }
+
+            nextBtn.addEventListener('click', () => {
+                if (validateSection(currentSection)) {
+                    sections[currentSection].classList.remove('active');
+                    currentSection++;
+                    if (currentSection < sections.length) {
+                        sections[currentSection].classList.add('active');
+                        prevBtn.style.display = 'block';
+                        updateProgress();
+
+                        if (currentSection === sections.length - 1) {
+                            nextBtn.style.display = 'none';
+                            submitBtn.style.display = 'block';
+                        }
+                    }
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                sections[currentSection].classList.remove('active');
+                currentSection--;
+                sections[currentSection].classList.add('active');
+                
+                if (currentSection === 0) {
+                    prevBtn.style.display = 'none';
+                }
+                
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+                updateProgress();
+            });
+
+            const lastWorkDayInput = document.getElementById('lastWorkDay');
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const formattedTomorrow = tomorrow.toISOString().split('T')[0];
+            lastWorkDayInput.min = formattedTomorrow;
+
+            const twoMonthsFromToday = new Date();
+            twoMonthsFromToday.setMonth(twoMonthsFromToday.getMonth() + 2);
+            const formattedMaxDate = twoMonthsFromToday.toISOString().split('T')[0];
+            lastWorkDayInput.max = formattedMaxDate;
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if (!validateSection(currentSection)) {
+                    return;
+                }
+
+                const formData = new FormData(form);
+                const data = {};
+                
+                for (let [key, value] of formData.entries()) {
+                    data[key] = value;
+                }
+
+                data.assets = Array.from(
+                    document.querySelectorAll('input[name="assets"]:checked')
+                ).map(checkbox => checkbox.value);
+
+                try {
+                    const response = await fetch('http://localhost:3000/api/offboarding', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.error || 'Submission failed');
+                    }
+
+                    form.style.display = 'none';
+                    successMessage.style.display = 'block';
+                    successMessage.textContent = 'Your offboarding request has been submitted successfully.';
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                        form.style.display = 'block';
+                        resetForm();
+                    }, 2000);
+                } catch (error) {
+                    alert('There was an error submitting the form: ' + error.message);
+                    console.error('Submission error:', error);
+                }
+            });
+
+            updateProgress();
+        });
+    </script>
+</body>
+</html>
