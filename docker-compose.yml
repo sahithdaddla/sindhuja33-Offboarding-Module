@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin123
     ports:
-      - "5473:5432"
+      - "5207:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql 
@@ -21,7 +21,7 @@ services:
     depends_on:
       - postgres
     ports:
-      - "3043:3043"
+      - "3207:3207"
     environment:
       - NODE_ENV=production
 
@@ -30,7 +30,7 @@ services:
     container_name: offboarding33-employee-ui
     restart: always
     ports:
-      - "8196:80"
+      - "8013:80"
     depends_on:
       - backend
 
@@ -39,7 +39,7 @@ services:
     container_name: offboarding33-hr-ui
     restart: always
     ports:
-      - "8197:80"
+      - "8014:80"
     depends_on:
       - backend
 

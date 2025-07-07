@@ -384,7 +384,7 @@
 
             async function loadOffboardingRequests(searchTerm = '', statusValue = 'All') {
                 try {
-                    const response = await fetch(`http://13.61.11.89:3043/api/offboarding?search=${encodeURIComponent(searchTerm)}&status=${statusValue}`);
+                    const response = await fetch(`http://3.85.61.23:3207/api/offboarding?search=${encodeURIComponent(searchTerm)}&status=${statusValue}`);
                     const offboardingData = await response.json();
 
                     requestsContainer.innerHTML = '';
@@ -447,7 +447,7 @@
 
             window.viewRequestDetails = async function(id) {
                 try {
-                    const response = await fetch(`http://13.61.11.89:3043/api/offboarding/${id}`);
+                    const response = await fetch(`http://3.85.61.23:3207/api/offboarding/${id}`);
                     const request = await response.json();
 
                     if (!request) {
@@ -523,7 +523,7 @@
 
             async function updateRequestStatus(id, status) {
                 try {
-                    const response = await fetch(`http://13.61.11.89:3043/api/offboarding/${id}`, {
+                    const response = await fetch(`http://3.85.61.23:3207/api/offboarding/${id}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -555,7 +555,7 @@
             clearRecordsBtn.addEventListener('click', function() {
                 showConfirmModal('Are you sure you want to clear all records? This action cannot be undone.', async function() {
                     try {
-                        const response = await fetch('http://13.61.11.89:3043/api/offboarding', {
+                        const response = await fetch('http://3.85.61.23:3207/api/offboarding', {
                             method: 'DELETE',
                         });
                         const result = await response.json();
