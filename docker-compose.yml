@@ -36,7 +36,7 @@ services:
 
   hr-offboarding:
     build: ./HR-offboarding
-    container_name: offboarding33-hr-ui
+    container_name: offboarding333-hr-ui
     restart: always
     ports:
       - "8014:80"
